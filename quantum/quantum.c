@@ -235,6 +235,9 @@ bool process_record_quantum(keyrecord_t *record) {
   #ifdef PRINTING_ENABLE
     process_printer(keycode, record) &&
   #endif
+  #ifdef AUTO_SHIFT_ENABLE
+    process_auto_shift(keycode, record) &&
+  #endif
   #ifdef UNICODEMAP_ENABLE
     process_unicode_map(keycode, record) &&
   #endif
@@ -285,6 +288,18 @@ bool process_record_quantum(keyrecord_t *record) {
   case RGB_MOD:
     if (record->event.pressed) {
       rgblight_step();
+    }
+    return false;
+  case RGB_SMOD:
+    // same as RBG_MOD, but if shift is pressed, it will use the reverese direction instead.
+    if (record->event.pressed) {
+      uint8_t shifted = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
+      if(shifted) {
+        rgblight_step_reverse();
+      }
+      else {
+        rgblight_step();
+      }
     }
     return false;
   case RGB_HUI:
