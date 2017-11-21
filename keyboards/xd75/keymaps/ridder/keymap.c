@@ -14,7 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "xd75.h"
-#include "print.h"  
+
+#include "ridder.h"
 
 
 // Fillers to make layering more clear
@@ -42,103 +43,23 @@ enum tap_dance_t {
     HYPER_CURLY_BRACKET_LEFT  = 1,
 };
 
-enum {
-    SINGLE_TAP = 1,
-    SINGLE_HOLD,
-    DOUBLE_SINGLE_TAP,
-    INVALID_TAP_STATE,
-};
-
-typedef struct {
-    uint32_t state;
-    uint32_t single_tap_keycode;
-    uint32_t single_tap_mod;
-    uint32_t single_hold_keycode_1;
-    uint32_t single_hold_keycode_2;
-    uint32_t single_hold_keycode_3;
-} tap_user_data_t;
-
-int cur_tap_dance_state(qk_tap_dance_state_t *state) {
-    if (state->count == 1) {
-        return (state->interrupted || state->pressed == 0) ? SINGLE_TAP : SINGLE_HOLD;
-    } else if (state->count == 2) {
-        return (state->interrupted) ? DOUBLE_SINGLE_TAP : INVALID_TAP_STATE;
-    }
-    return INVALID_TAP_STATE;
-}
-
 static tap_user_data_t left_hyper_state = {
     .state = 0,
     .single_tap_keycode = KC_LCBR,
     .single_tap_mod = KC_LSFT,
-    .single_hold_keycode_1 = KC_LALT,
-    .single_hold_keycode_2 = KC_LCTL,
-    .single_hold_keycode_3 = KC_LGUI,
+    .single_hold_keycodes = { KC_LALT, KC_LCTL, KC_LGUI },
 };
 
 static tap_user_data_t right_hyper_state = {
     .state = 0,
     .single_tap_keycode = KC_RCBR,
     .single_tap_mod = KC_RSFT,
-    .single_hold_keycode_1 = KC_RALT,
-    .single_hold_keycode_2 = KC_RCTL,
-    .single_hold_keycode_3 = KC_RGUI,
+    .single_hold_keycodes = { KC_RALT, KC_RCTL, KC_RGUI },
 };
 
-static void tap_finished(qk_tap_dance_state_t *state, void *user_data)
-{
-    tap_user_data_t *tap_state = (tap_user_data_t *)user_data;
-    tap_state->state = cur_tap_dance_state(state);
-    switch (tap_state->state) {
-        case SINGLE_TAP:
-            register_code(tap_state->single_tap_mod);
-            register_code(tap_state->single_tap_keycode);
-            unregister_code(tap_state->single_tap_mod);
-            break;
-        case SINGLE_HOLD:
-            register_code(tap_state->single_hold_keycode_1);
-            register_code(tap_state->single_hold_keycode_2);
-            register_code(tap_state->single_hold_keycode_3);
-            break;
-        case DOUBLE_SINGLE_TAP:
-            register_code(tap_state->single_tap_mod);
-            register_code(tap_state->single_tap_keycode);
-            unregister_code(tap_state->single_tap_keycode);
-            register_code(tap_state->single_tap_keycode);
-            unregister_code(tap_state->single_tap_mod);
-            break;
-        default:
-            break;
-    }
-}
-
-static void tap_reset(qk_tap_dance_state_t *state, void *user_data)
-{
-    tap_user_data_t *tap_state = (tap_user_data_t *)user_data;
-
-    switch (tap_state->state) {
-        case SINGLE_TAP:
-            unregister_code(tap_state->single_tap_keycode);
-            break;
-        case INVALID_TAP_STATE:
-            break;
-        case SINGLE_HOLD:
-            unregister_code(tap_state->single_hold_keycode_3);
-            unregister_code(tap_state->single_hold_keycode_2);
-            unregister_code(tap_state->single_hold_keycode_1);
-            break;
-        case DOUBLE_SINGLE_TAP:
-            unregister_code(tap_state->single_tap_keycode);
-            break;
-        default:
-            xprintf("LOL WUT\n");
-            break;
-    }
-}
-
 qk_tap_dance_action_t tap_dance_actions[] = {
-  [HYPER_CURLY_BRACKET_RIGHT] = { .fn = { NULL, tap_finished, tap_reset }, .user_data = &right_hyper_state },
-  [HYPER_CURLY_BRACKET_LEFT]  = { .fn = { NULL, tap_finished, tap_reset }, .user_data = &left_hyper_state },
+  [HYPER_CURLY_BRACKET_RIGHT] = SINGLE_HOLD_TAP(&right_hyper_state),
+  [HYPER_CURLY_BRACKET_LEFT]  = SINGLE_HOLD_TAP(&left_hyper_state),
 };
 
 #define EscNav LT(NAV_LAYER, KC_ESC)
