@@ -1,4 +1,6 @@
 #include "ridder.h"
+#include "process_tap_dance.h"
+#include "quantum.h"
 
 static int cur_tap_dance_state(qk_tap_dance_state_t *state) {
     if (state->count == 1) {

@@ -16,6 +16,7 @@
 
 #include "planck.h"
 #include "action_layer.h"
+#include "ridder.h"
 
 extern keymap_config_t keymap_config;
 
@@ -44,6 +45,33 @@ enum planck_keycodes {
   BACKLIT,
 };
 
+enum tap_dance_t {
+    HYPER_CURLY_BRACKET_RIGHT = 0,
+    HYPER_CURLY_BRACKET_LEFT  = 1,
+};
+
+static tap_user_data_t left_hyper_state = {
+    .state = 0,
+    .single_tap_keycode = KC_LCBR,
+    .single_tap_mod = KC_LSFT,
+    .single_hold_keycodes = { KC_LALT, KC_LCTL, KC_LGUI },
+};
+
+static tap_user_data_t right_hyper_state = {
+    .state = 0,
+    .single_tap_keycode = KC_RCBR,
+    .single_tap_mod = KC_RSFT,
+    .single_hold_keycodes = { KC_RALT, KC_RCTL, KC_RGUI },
+};
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+  [HYPER_CURLY_BRACKET_RIGHT] = SINGLE_HOLD_TAP(&right_hyper_state),
+  [HYPER_CURLY_BRACKET_LEFT]  = SINGLE_HOLD_TAP(&left_hyper_state),
+};
+
+#define RHYP_BR TD(HYPER_CURLY_BRACKET_RIGHT)
+#define LHYP_BR TD(HYPER_CURLY_BRACKET_LEFT)
+
 #define ESC_NAV_LY LT(_NAVIGATION_LAYER, KC_ESC)
 #define SCLN_NAV_LY LT(_NAVIGATION_LAYER, KC_SCLN)
 #define LBRT LT(_ADJUST, KC_LBRACKET)
@@ -51,37 +79,24 @@ enum planck_keycodes {
 #define LCTL_ CTL_T(KC_LCBR)
 #define RCTL_ CTL_T(KC_RCBR)
 
-#define WM_FULL LALT(LGUI(KC_F))
-#define WM_NEXT LCTL(LALT(LGUI(KC_RGHT)))
-#define WM_PREV LCTL(LALT(LGUI(KC_LEFT)))
-#define WM_NW   LCTL(LGUI(KC_LEFT))
-#define WM_N    LALT(LGUI(KC_UP))
-#define WM_NE   LCTL(LGUI(KC_RGHT))
-#define WM_E    LALT(LGUI(KC_RGHT))
-#define WM_SE   S(LCTL(LGUI(KC_RGHT)))
-#define WM_S    LALT(LGUI(KC_DOWN))
-#define WM_SW   S(LCTL(LGUI(KC_LEFT)))
-#define WM_W    LALT(LGUI(KC_LEFT))
-#define WM_CNTR LALT(LGUI(KC_C))
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Qwerty
  * ,------------------------------------------------------------------------------------------------------------.
- * | Tab        |   Q      |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P          | ENT         |
+ * | Tab        |   Q      |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P          | Enter       |
  * |------------+----------+------+------+------+-------------+------+------+------+--------------+-------------|
  * | Esc-F(Nav) |   A      |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  | ;-F(Nav)     |  "          |
  * |------------+----------+------+------+------+------|------+------+------+------+--------------+-------------|
- * | Shift - '('|   Z      |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /          | SHIFT - ')' |
+ * | Shift - '('|   Z      |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /          | Shift - ')' |
  * |------------+----------+------+------+------+------+------+------+------+------+--------------+-------------|
- * | F(3) - '[  | Ctrl-'{' | Alt  | GUI  |Lower |    Space    |Raise | GUI  | Alt  | Ctrl-'}'     | F(3) - ']'  |
+ * | Ctrl - '[  | Hyp -'{' | Alt  | GUI  |Lower |    Space    |Raise | GUI  | Alt  | Hyper-'}'    | Ctrl - ']'  |
  * `------------------------------------------------------------------------------------------------------------'
  */
 [BASE_QWERTY_LAYER] = {
-  {KC_TAB,       KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,           KC_ENT },
-  {ESC_NAV_LY,   KC_A,   KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    SCLN_NAV_LY,    KC_QUOT},
-  {KC_LSPO,      KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,        KC_RSPC},
-  {LCTL_,        LCTL_,  KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_RGUI, KC_RALT, RCTL_,          RCTL_  }
+  {KC_TAB,     KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,           KC_ENT },
+  {ESC_NAV_LY, KC_A,   KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    SCLN_NAV_LY,    KC_QUOT},
+  {KC_LSPO,    KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,        KC_RSPC},
+  {LCTL_,     LHYP_BR, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_RGUI, KC_RALT, RHYP_BR,        RCTL_  }
 },
 
 /* Numeric layer
@@ -98,7 +113,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LOWER] = {
     {KC_GRV , KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______},
     {_______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______},
-    {_______, KC_MINS, KC_EQL,  KC_GRV,  KC_BSLS, ___x___, ___x___, ___x___, KC_COMM, KC_DOT,  KC_SLSH, _______},
+    {_______, KC_MINS, KC_EQL,  KC_GRV,  KC_BSLS, ___x___, ___x___, ___x___, _______, _______, _______, _______},
     {_______, _______, _______, _______, _______, KC_BSPC, KC_BSPC, _______, _______, _______, _______, _______}
 },
 
@@ -116,7 +131,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_RAISE] = {
     {KC_TILD, S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5), S(KC_6), S(KC_7), S(KC_8), KC_QUOT, S(KC_QUOT), _______},
     {_______, KC_F11,  KC_F12,  KC_F13,  KC_F14,  KC_F15,  KC_F16,  KC_F17,  KC_F18,  KC_F19,  KC_F20,     _______},
-    {_______, KC_UNDS, KC_PLUS, KC_TILD, KC_PIPE, ___x___, ___x___, ___x___, KC_COMM, KC_DOT,  KC_SLSH,    _______},
+    {_______, KC_UNDS, KC_PLUS, KC_TILD, KC_PIPE, ___x___, ___x___, ___x___, _______, _______, _______,    _______},
     {_______, _______, _______, _______, _______, KC_DEL,  KC_DEL,  _______, _______, _______, _______,    _______}
 },
 
@@ -137,7 +152,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     {___x___,    ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___},
     {ESC_NAV_LY, ___x___, KC_HOME, KC_PGUP, KC_PGDN, KC_END,  KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, SCLN_NAV_LY, _______},
     {_______,    ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, _______},
-    {_______,    KC_MPRV, KC_MPLY, KC_MNXT, KC_SLCK, KC_SLEP, KC_SLEP, KC_PAUS, KC_MUTE, KC_VOLD, KC_VOLU, _______}
+    {_______,    KC_MPRV, KC_MPLY, KC_MNXT, _______, _______, _______, _______, KC_MUTE, KC_VOLD, KC_VOLU, _______}
 },
 
 /* GUI (window management/mouse/media controls) layer
@@ -155,9 +170,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 *                        \___ Media ___/   \___ Screen/sleep __/   \___ Volume __/
 */
 [_ADJUST] = {
-    {_______, KC_BTN2, KC_MS_U, KC_BTN1, KC_WH_D, ___x___, ___x___, WM_PREV, WM_NW,   WM_N,    WM_NE,   _______},
-    {_______, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, ___x___, ___x___, WM_FULL, WM_W,    WM_CNTR, WM_E,    _______},
-    {_______, KC_WH_L, KC_BTN3, KC_WH_R, ___x___, ___x___, ___x___, WM_NEXT, WM_SW,   WM_S,    WM_SE,   _______},
+    {_______, KC_BTN2, KC_MS_U, KC_BTN1, KC_WH_D, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, _______},
+    {_______, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, _______},
+    {_______, KC_WH_L, KC_BTN3, KC_WH_R, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, ___x___, _______},
     {_______, KC_MPRV, KC_MPLY, KC_MNXT, KC_SLCK, KC_SLEP, KC_SLEP, KC_PAUS, KC_MUTE, KC_VOLD, KC_VOLU, _______}
 },
 };
