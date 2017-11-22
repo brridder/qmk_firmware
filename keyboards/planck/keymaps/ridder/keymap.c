@@ -76,8 +76,8 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 #define SCLN_NAV_LY LT(_NAVIGATION_LAYER, KC_SCLN)
 #define LBRT LT(_ADJUST, KC_LBRACKET)
 #define RBRT LT(_ADJUST, KC_RBRACKET)
-#define LCTL_ CTL_T(KC_LCBR)
-#define RCTL_ CTL_T(KC_RCBR)
+#define LCTL_ CTL_T(KC_LBRC)
+#define RCTL_ CTL_T(KC_RBRC)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
