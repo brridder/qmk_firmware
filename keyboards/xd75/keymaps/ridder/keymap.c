@@ -23,22 +23,16 @@
 #define ___T___ KC_TRNS
 #define XXXXXXX KC_NO
 
-// Layer shorthand
-#define _QW 0
-#define _CM 1
-#define _DV 2
-#define _LW 3
-#define _RS 4
-#define _FN 5
-
 enum xd75_layers {
   QWERTY_LAYER,
   QWERTY_SPLIT,
   NAV_LAYER,
+  NAV_LAYER_S,
   LOWER,
   LOWER_S, // Split
   RAISE,
   RAISE_S, // Split
+  FN,
 };
 
 enum tap_dance_t {
@@ -70,6 +64,8 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 #define EscNav LT(NAV_LAYER, KC_ESC)
 #define SclNav LT(NAV_LAYER, KC_SCLN)
+#define EscNavS LT(NAV_LAYER_S, KC_ESC)
+#define SclNavS LT(NAV_LAYER_S, KC_SCLN)
 #define LCTL_BR CTL_T(KC_LBRC)
 #define RCTL_BR CTL_T(KC_RBRC)
 #define RHYP_BR TD(HYPER_CURLY_BRACKET_RIGHT)
@@ -92,7 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
  [QWERTY_LAYER] = { /* QWERTY */
-  { KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,      KC_5,    KC_6,    KC_7,      KC_8,    KC_9,    KC_0,    KC_BSPC, KC_BSPC, _______, MO(_FN)  },
+  { KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,      KC_5,    KC_6,    KC_7,      KC_8,    KC_9,    KC_0,    KC_BSPC, KC_BSPC, _______, MO(FN)  },
   { KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,      KC_T,    KC_Y,    KC_U,      KC_I,    KC_O,    KC_P,    KC_ENT , KC_ENT , _______, _______  },
   { EscNav,  KC_A,    KC_S,    KC_D,    KC_F,      KC_G,    KC_H,    KC_J,      KC_K,    KC_L,    SclNav,  KC_QUOT, _______, _______, _______  },
   { KC_LSPO, KC_Z,    KC_X,    KC_C,    KC_V,      KC_B,    KC_N,    KC_M,      KC_COMM, KC_DOT,  KC_SLSH, KC_RSPC, _______, KC_UP,   _______  },
@@ -114,9 +110,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
  [QWERTY_SPLIT] = { /* QWERTY */
-  { KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,        KC_5,   KC_MINS, MO(_FN), KC_EQL,  KC_6,   KC_7,      KC_8,    KC_9,    KC_0,    KC_BSPC },
-  { KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,        KC_T,   KC_LBRC, KC_BSLS, KC_RBRC, KC_Y,   KC_U,      KC_I,    KC_O,    KC_P,    KC_QUOT },
-  { EscNav,  KC_A,    KC_S,    KC_D,    KC_F,        KC_G,   KC_HOME, KC_DEL,  KC_PGUP, KC_H,   KC_J,      KC_K,    KC_L,    KC_SCLN, KC_ENT  },
+  { KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,        KC_5,   KC_MINS, MO(FN),  KC_EQL,  KC_6,   KC_7,      KC_8,    KC_9,    KC_0,    KC_BSPC },
+  { KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,        KC_T,   KC_LBRC, KC_BSLS, KC_RBRC, KC_Y,   KC_U,      KC_I,    KC_O,    KC_P,    KC_ENT  },
+  { EscNavS, KC_A,    KC_S,    KC_D,    KC_F,        KC_G,   KC_HOME, KC_DEL,  KC_PGUP, KC_H,   KC_J,      KC_K,    KC_L,    SclNavS, KC_QUOT },
   { KC_LSPO, KC_Z,    KC_X,    KC_C,    KC_V,        KC_B,   KC_END,  KC_UP,   KC_PGDN, KC_N,   KC_M,      KC_COMM, KC_DOT,  KC_SLSH, KC_RSPC },
   { LCTL_BR, LHYP_BR, KC_LALT, KC_LGUI, MO(LOWER_S), KC_SPC, KC_LEFT, KC_DOWN, KC_RGHT, KC_SPC, MO(RAISE_S), KC_RGUI, KC_RALT, RHYP_BR , RCTL_BR },
  },
@@ -223,13 +219,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * '--------------------------------------------------------------------------------------------------------------------------------------'
  */
 
- [_FN] = { /* FUNCTION */
+ [FN] = { /* FUNCTION */
   { KC_NLCK, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, ___T___, ___T___  },
   { KC_SLCK, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PAUS, KC_PSCR  },
   { KC_CAPS, KC_BTN5, KC_BTN4, KC_BTN3, KC_BTN2, KC_ACL0, KC_ACL2, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY, _______, ___T___, ___T___, KC_WH_U  },
   { _______, _______, _______, _______, _______, _______, _______, RGB_VAD, BL_TOGG, BL_INC,  BL_DEC,  ___T___, ___T___, KC_MS_U, KC_WH_D  },
   { RESET  , _______, DefQW,   DefQWS , _______, KC_BTN1, KC_BTN1, _______, _______, _______, _______, _______, KC_MS_L, KC_MS_D, KC_MS_R  },
  },
+
 
 /* NAV LAYER
  * .--------------------------------------------------------------------------------------------------------------------------------------.
@@ -249,6 +246,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ },
   { _______, _______, KC_HOME, KC_PGDN, KC_PGUP, KC_END , KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT, _______, _______, _______, _______, _______ },
   { _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, _______, _______, KC_PAUS, KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, _______, _______ },
+  { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ },
+ },
+/* NAV LAYER SPLIT
+ * .--------------------------------------------------------------------------------------------------------------------------------------.
+ * |        |        |        |        |        |        |        |        |        |        |        |        |        |        |        |
+ * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+-----------------|
+ * |        |        |        |        |        |        |        |        |        |        |        |        |        |        |        |
+ * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+-----------------+--------|
+ * |        |        | HOME   | PgUp   | PgDn   | END    |        |        |        | LEFT   | DOWN   | UP     | RIGHT  |        |        |
+ * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------------------------+--------|
+ * |        |        |        |        |        |        |        |        |        |        |        |        |        |        |        |
+ * |--------+--------+--------+--------+--------+-----------------+--------+--------+--------+--------+-----------------+--------+--------|
+ * |        |        |        |        |        |        |        |        |        |        |        |        |        |        |        |
+ * '--------------------------------------------------------------------------------------------------------------------------------------'
+ */
+ [NAV_LAYER_S] = {
+  { KC_GRV , _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ },
+  { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ },
+  { _______, _______, KC_HOME, KC_PGDN, KC_PGUP, KC_END , _______, _______, _______, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT, _______, _______ },
+  { _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, _______, _______, _______, _______, _______, KC_PAUS, KC_MUTE, KC_VOLD, KC_VOLU, _______ },
   { _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ },
  },
 };
