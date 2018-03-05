@@ -10,8 +10,8 @@ enum mitosis_layers
 {
     _STD,
     _VGC,
-    _LWR,
-    _NUM,
+    _LWR, // Lower
+    _UPR, // Upper
     _FN
 };
 
@@ -32,6 +32,12 @@ enum tap_dance_t {
     HYPER_CURLY_BRACKET_RIGHT = 0,
     HYPER_CURLY_BRACKET_LEFT  = 1,
 };
+
+#define EscNav LT(NAV_LAYER, KC_ESC)
+#define LCTL_BR CTL_T(KC_LBRC)
+#define RCTL_BR CTL_T(KC_RBRC)
+#define RHYP_BR TD(HYPER_CURLY_BRACKET_RIGHT)
+#define LHYP_BR TD(HYPER_CURLY_BRACKET_LEFT)
 
 static tap_user_data_t left_hyper_state = {
     .state = 0,
@@ -61,9 +67,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |--------+--------+--------+--------+--------||--------+--------+--------+--------+--------|
  * | Z      | X      | C      | V      | B      || N      | M      | ,      | .      | /      |
  * '--------+--------+--------+--------+--------||--------+--------+--------+--------+--------'
- *          | PGUP   | TAB    | LCTRL  | SPACE  || LSHIFT | ENTER  | UP     | PSCR   |
+ *          | Shft-( | FN     |        |        ||        |        | '      | Shft-) |
  *          |--------+--------+--------+--------||--------+--------+--------+--------|
- *          | PGDN   | LGUI   | LALT   | FN     || NUM    | LEFT   | DOWN   | RIGHT  |
+ *          | CTRL-[ | META-{ | LOWER  | SPACE  || ENTER  | UPPER  | META-} | CTRL-] |
  *          '-----------------------------------''-----------------------------------'
  */
 
@@ -71,41 +77,41 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   {KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,           KC_Y,    KC_U,    KC_I,    KC_O,    KC_P    },
   {KC_A,    KC_S,    KC_D,    KC_F,    KC_G,           KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN },
   {KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,           KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH },
-  {XXXXXXX, KC_PGUP, MO(_FN), KC_LCTL, MO(_LWR),       KC_LSFT, KC_ENT,  KC_UP,   KC_PSCR, XXXXXXX },
-  {XXXXXXX, KC_PGDN, KC_LGUI, KC_LALT, KC_SPC,         MO(_NUM), KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX }
+  {XXXXXXX, KC_LSPO, MO(_FN), _______, _______,        _______, _______, KC_QUOT, KC_RSPC, XXXXXXX },
+  {XXXXXXX, LCTL_BR, LHYP_BR, MO(_LWR), KC_SPC,        KC_ENT , MO(_UPR),RHYP_BR, RCTL_BR, XXXXXXX }
 },
 
 /* Video Games
  * .--------------------------------------------..--------------------------------------------.
- * | Q      | W      | E      | R      | T      || Y      | U      | I      | O      | P      |
+ * | TAB    | Q      | W      | E      | R      || Y      | U      | I      | O      | P      |
  * |--------+--------+--------+--------+--------||--------+--------+--------+--------+--------|
- * | A      | S      | D      | F      | G      || J      | H      | K      | L      | ;      |
+ * | ESC    | A      | S      | D      | F      || J      | H      | K      | L      | ;      |
  * |--------+--------+--------+--------+--------||--------+--------+--------+--------+--------|
- * | Z      | X      | C      | V      | B      || N      | M      | ,      | .      | /      |
+ * | SHIFT  | Z      | X      | C      | V      || N      | M      | ,      | .      | /      |
  * '--------+--------+--------+--------+--------||--------+--------+--------+--------+--------'
  *          | PGUP   | TAB    | LCTRL  | SPACE  || LSHIFT | ENTER  | UP     | PSCR   |
  *          |--------+--------+--------+--------||--------+--------+--------+--------|
- *          | PGDN   | LGUI   | LALT   | FN     || NUM    | LEFT   | DOWN   | RIGHT  |
+ *          | LCTL   | LGUI   | LALT   | FN     || NUM    | LEFT   | DOWN   | RIGHT  |
  *          '-----------------------------------''-----------------------------------'
  */
 // Video game config
-[_VGC] = { /* Standard; as compatible with dvorak and qwerty as possible */
+[_VGC] = {
   {KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,           KC_Y,    KC_U,    KC_I,    KC_O,    KC_P    },
   {KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,           KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN },
-  {KC_LCTL, KC_Z,    KC_X,    KC_C,    KC_V,           KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH },
+  {KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,           KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH },
   {XXXXXXX, KC_PGUP, MO(_FN), KC_LCTL, MO(_LWR),       KC_LSFT, KC_ENT,  KC_UP,   KC_PSCR, XXXXXXX },
-  {XXXXXXX, KC_LSFT, KC_LALT, KC_LALT, KC_SPC,         MO(_NUM), KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX }
+  {XXXXXXX, KC_LCTL, KC_LALT, KC_LALT, KC_SPC,         MO(_UPR), KC_LEFT, KC_DOWN, KC_RGHT, XXXXXXX }
 },
 
 /* Number layout, for data entry and programming purposes (Dvorak result in parens)
  * .--------------------------------------------..--------------------------------------------.
  * | 1      | 2      | 3      | 4      | 5      || 6      | 7      | 8      | 9      | 0      |
  * |--------+--------+--------+--------+--------||--------+--------+--------+--------+--------|
- * | TAB    |   (,<) |   (.>) | - ([{) | = (]}) || ] (=+) | pad *  | pad +  | pad -  | [ (/?) |
- * |--------+--------+--------+--------+--------||--------+--------+--------+--------+--------|
  * | F1     | F2     | F3     | F4     | F5     || F6     | F7     | F8     | F9     | F10    |
+ * |--------+--------+--------+--------+--------||--------+--------+--------+--------+--------|
+ * | -      | =      | `      | \      |        ||        |        |        |        |        |
  * '--------+--------+--------+--------+--------||--------+--------+--------+--------+--------'
- *          | F11    | F12    |        |        ||        |        |        |        |
+ *          |        |        |        |        ||        |        |        |        |
  *          |--------+--------+--------+--------||--------+--------+--------+--------|
  *          |        |        |        |        ||        |        |        |        |
  *          '-----------------------------------''-----------------------------------'
@@ -114,30 +120,30 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LWR] = { /* LOWER */
   {KC_1,    KC_2,    KC_3,    KC_4,    KC_5,          KC_6,    KC_7,    KC_8,    KC_9,    KC_0    },
   {KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,         KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10  },
-  {KC_TAB,  KC_MINS, KC_EQL , KC_GRV , KC_BSLS,        KC_RBRC, KC_PAST, KC_PPLS, KC_PMNS, KC_LBRC },
+  {KC_MINS, KC_EQL , KC_GRV , KC_BSLS, _______,       _______, _______, _______, _______, _______ },
   {XXXXXXX, _______, _______, _______, _______,       _______, _______, _______, _______, XXXXXXX },
   {XXXXXXX, _______, _______, _______, _______,       _______, _______, _______, _______, XXXXXXX }
 },
 
 /* Number layout, for data entry and programming purposes (Dvorak result in parens)
  * .--------------------------------------------..--------------------------------------------.
- * | TAB    |   (,<) |   (.>) | - ([{) | = (]}) || ] (=+) | pad *  | pad +  | pad -  | [ (/?) |
+ * | !      | @      | #      | $      | %      || ^      | &      | *      | '      | "      |
  * |--------+--------+--------+--------+--------||--------+--------+--------+--------+--------|
- * | 1      | 2      | 3      | 4      | 5      || 6      | 7      | 8      | 9      | 0      |
+ * |        |        |        |        |        || Left   | Down   | Up     | Right  |        |
  * |--------+--------+--------+--------+--------||--------+--------+--------+--------+--------|
- * | F1     | F2     | F3     | F4     | F5     || F6     | F7     | F8     | F9     | F10    |
+ * | _      | +      | ~      | |      |        ||        |        |        |        |        |
  * '--------+--------+--------+--------+--------||--------+--------+--------+--------+--------'
- *          | F11    | F12    |        |        ||        |        |        |        |
+ *          |        |        |        |        ||        |        |        |        |
  *          |--------+--------+--------+--------||--------+--------+--------+--------|
  *          |        |        |        |        ||        |        |        |        |
  *          '-----------------------------------''-----------------------------------'
  */
 
-[_NUM] = { /* Number layout along the home row for maximum speed*/
-  {KC_1,    KC_2,    KC_3,    KC_4,    KC_5,          KC_6,    KC_7,    KC_8,    KC_9,    KC_0    },
-  {KC_TAB,  _______, _______, KC_MINS, KC_EQL,        KC_RBRC, KC_PAST, KC_PPLS, KC_PMNS, KC_LBRC },
-  {KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,         KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10  },
-  {XXXXXXX, KC_F11,  KC_F12,  _______, _______,       _______, _______, _______, _______, XXXXXXX },
+[_UPR] = {  /* Upper */
+  {S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),       S(KC_6), S(KC_7), S(KC_8), KC_QUOT, S(KC_QUOT)},
+  {_______, _______, _______, _______, _______,       KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT, _______ },
+  {S(KC_MINS),S(KC_EQL),S(KC_GRV),S(KC_BSLS),_______, _______, _______, _______, _______, _______ },
+  {XXXXXXX, _______, _______, _______, _______,       _______, _______, _______, _______, XXXXXXX },
   {XXXXXXX, _______, _______, _______, _______,       _______, _______, _______, _______, XXXXXXX }
 },
 
@@ -191,7 +197,7 @@ void matrix_scan_user(void) {
         case _FN:
             set_led_blue;
             break;
-        case _NUM:
+        case _UPR:
             set_led_red;
             break;
         default:
