@@ -65,14 +65,14 @@ uint16_t keycode_config(uint16_t keycode) {
             }
             return KC_RGUI;
         case KC_GRAVE:
-            if (keymap_config.swap_grave_esc) {
-                return KC_ESC;
-            }
+            //if (keymap_config.swap_grave_esc) {
+                //return KC_ESC;
+            //}
             return KC_GRAVE;
         case KC_ESC:
-            if (keymap_config.swap_grave_esc) {
-                return KC_GRAVE;
-            }
+            //if (keymap_config.swap_grave_esc) {
+                //return KC_GRAVE;
+            //}
             return KC_ESC;
         case KC_BSLASH:
             if (keymap_config.swap_backslash_backspace) {
